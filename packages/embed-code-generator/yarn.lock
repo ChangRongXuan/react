@@ -1160,18 +1160,18 @@
   resolved "https://registry.yarnpkg.com/@polka/url/-/url-1.0.0-next.21.tgz#5de5a2385a35309427f6011992b544514d559aa1"
   integrity sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==
 
-"@readr-media/react-dropping-text@1.0.6":
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/@readr-media/react-dropping-text/-/react-dropping-text-1.0.6.tgz#b66c2dde91fd95af93da7bc0c1191b4f704635ed"
-  integrity sha512-0lA5gzi+DBU6fXZOC+Rd3mU0rYVgLha9eIUlKGIJwYmx3ucwT1BkT7l3E/lUgQB0Im4C6bOEXlrrKkWmwTiIAw==
+"@readr-media/react-dropping-text@1.0.8":
+  version "1.0.8"
+  resolved "https://registry.yarnpkg.com/@readr-media/react-dropping-text/-/react-dropping-text-1.0.8.tgz#970fcd6488015327987881ab259db6fee5a8203f"
+  integrity sha512-5YZrTFOL24A8M/GdXczG3IZPwkfrRh95c/m+N9CCDuGY3goqiFYhLHC38+4xR4ipwjmQXGCB/stWKVQdWV99lg==
   dependencies:
     matter-js "^0.19.0"
     react-intersection-observer "^9.3.5"
 
-"@readr-media/react-dropping-text@1.0.7":
-  version "1.0.7"
-  resolved "https://registry.yarnpkg.com/@readr-media/react-dropping-text/-/react-dropping-text-1.0.7.tgz#f30897154e721386d35fe69c6f1d1cd4ba38723e"
-  integrity sha512-49YgIgPrqmI/4wo1d+qBqLs+V7yo0oYbXBMYpfhEMUdJb2/E0eBfPp5mlNMGmmdKnodtfI+V7t8bZF5iFS/qXg==
+"@readr-media/react-dropping-text@1.0.9":
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/@readr-media/react-dropping-text/-/react-dropping-text-1.0.9.tgz#b0aac6129674ffac0b30d35505fc2f65a60c41ef"
+  integrity sha512-VM+dCxa/bQbGPLxIqpE1XmkNYsumqWwf7XGfHZaoWlPz/jjkJnBapuve7cYNMrdAA+4IHQw0CCAlkbwSqeHR0g==
   dependencies:
     matter-js "^0.19.0"
     react-intersection-observer "^9.3.5"
@@ -1192,12 +1192,12 @@
     "@twreporter/errors" "^1.1.1"
     axios "^0.27.2"
 
-"@readr-media/react-embed-code-generator@2.4.3-alpha.2":
-  version "2.4.3-alpha.1"
-  resolved "https://registry.yarnpkg.com/@readr-media/react-embed-code-generator/-/react-embed-code-generator-2.4.3-alpha.1.tgz#092054926b2b1f9469b4570fdbd11c15823223a0"
-  integrity sha512-a9gTRzXDI1PNEhcyjeQUHXzFABIGF3WTbVxShXjaGwg9p3nLEZ8s9a6j7eO7bNFU0wPIn0GoeY11Ilbj8GVEzQ==
+"@readr-media/react-embed-code-generator@2.4.3-alpha.3":
+  version "2.4.3-alpha.3"
+  resolved "https://registry.yarnpkg.com/@readr-media/react-embed-code-generator/-/react-embed-code-generator-2.4.3-alpha.3.tgz#a7ec3637ffeb4408f2d01cbab4bf4e1a090d90a6"
+  integrity sha512-SlsAnIFQ4JMcjQvvfKbNNGoO69AcCrY4Adf53PS0fVYOv8joRtynzY9OGWPd5mqsG8CSdAorHryJzlvjAYUo2w==
   dependencies:
-    "@readr-media/react-dropping-text" "1.0.6"
+    "@readr-media/react-dropping-text" "1.0.8"
     "@readr-media/react-dual-slides" "^1.1.0"
     "@readr-media/react-election-widgets" "1.0.2"
     "@readr-media/react-feedback" "^3.0.2"
