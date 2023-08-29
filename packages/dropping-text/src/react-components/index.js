@@ -60,6 +60,7 @@ const Block = styled.div`
 `
 
 const Text = styled.span`
+  color: #000000;
   font-size: 20px;
   user-select: none;
   visibility: hidden;
@@ -293,6 +294,7 @@ export default function DroppingText({
       {truncatedTextArr.map((txt, idx) => {
         return (
           <Text
+            className="text"
             key={idx}
             data-dropping-text
             dangerouslySetInnerHTML={{ __html: txt }}
