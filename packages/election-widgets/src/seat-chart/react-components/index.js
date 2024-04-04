@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import SeatsSwitch from './switch'
 
 const partiesColor = [
   {
@@ -64,7 +65,7 @@ const partiesColor = [
   },
   {
     index: 998,
-    name: '開票中',
+    name: '席次尚未確認',
     colors: ['#fff', '#fff', '#fff', '#fff', '#fff'],
   },
   {
@@ -81,13 +82,13 @@ const partiesColor = [
 
 const getPartyColor = (party) => {
   const color =
-    partiesColor.find((partyColor) => party.startsWith(partyColor.name))
+    partiesColor.find((partyColor) => party?.startsWith(partyColor.name))
       ?.colors[2] || partiesColor[partiesColor.length - 1].colors[2]
   return color
 }
 
 const SeatsChartWrapper = styled.div`
-  font-size: 24px;
+  font-size: 20px;
   line-height: 29px;
 `
 
@@ -100,7 +101,7 @@ const SeatsChartYear = styled.div`
   padding: 12px 0;
 `
 
-const SeartsChartTitle = styled.div`
+const SeatsChartTitle = styled.div`
   padding: 20px 0;
   text-align: center;
   background-color: #afafaf;
@@ -164,23 +165,111 @@ const SeatInfo = styled.div`
     `}
 `
 
-export default function SeatChart({ data, meta }) {
+const SeatsSwitchWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+`
+
+const SeatsSwitchOption = styled.span`
+  font-size: 13px;
+  ${/**
+   * @param {Object} props
+   * @param {boolean} props.isActive
+   * */
+  ({ isActive }) => isActive && `font-weight: 900;`}
+`
+
+function sortPartiesAndUndefinedParty(rawParties) {
+  let parties = rawParties
+  const undefinedPartyIndex = parties.findIndex(
+    (party) => party.label === '席次尚未確認'
+  )
+  if (undefinedPartyIndex !== -1) {
+    const undefinedParty = parties.splice(undefinedPartyIndex, 1)
+    parties.sort((a, b) => b.seats - a.seats)
+    parties.push(undefinedParty[0])
+  } else {
+    parties.sort((a, b) => b.seats - a.seats)
+  }
+  return parties
+}
+
+/**
+ * @typedef {Object} Party
+ * @property {string} label
+ * @property {number} seats
+ *
+ * @typedef {Object} SeatData
+ * @property {Array<Party>} parties
+ *
+ * @typedef {Object} SeatSwitchInfo
+ * @property {boolean} isOn - state to indicate whether the switch is on or off.
+ * @property {string} onText - text for switch on.
+ * @property {string} offText - text for switch off.
+ * @property {(value: boolean) => void} onChange - callback to send switch changed event.
+ *
+ * @typedef {Object} SeatMeta
+ * @property {string} componentTitle - title used for seat chart.
+ * @property {number} year - year to show on seat chart.
+ * @property {SeatSwitchInfo} switchInfo - switch info to show related UI and callback.
+ *
+ *
+ * This seat chart only takes input to render,
+ * the logic of the data processed will stay outside of it.
+ * @param {Object} props
+ * @param {SeatData} props.data
+ * @param {SeatMeta} props.meta
+ * @param {string} [props.className]
+ * @returns {JSX.Element}
+ */
+export default function SeatsChart({ data, meta, className }) {
   const [hoverParty, setHoverParty] = useState({
     show: false,
     party: '',
     coordinate: [],
   })
+
+  const parties = useMemo(() => {
+    return sortPartiesAndUndefinedParty(
+      data.parties && Array.isArray(data.parties) ? [...data.parties] : []
+    )
+  }, [data.parties])
+
   return (
-    <SeatsChartWrapper>
+    <SeatsChartWrapper className={className}>
       <SeatsChartYear>{meta.year}</SeatsChartYear>
-      <SeartsChartTitle>{meta.location + meta.componentTitle}</SeartsChartTitle>
+      <SeatsChartTitle>{meta.componentTitle}</SeatsChartTitle>
       <Wrapper>
         {hoverParty.show && (
           <SeatInfo coordinate={hoverParty.coordinate}>
             {hoverParty.party}
           </SeatInfo>
         )}
-        {data.parties.reduce((total, party) => {
+
+        {meta.switchInfo && (
+          <SeatsSwitchWrapper>
+            <SeatsSwitchOption isActive={!meta.switchInfo.isOn}>
+              {meta.switchInfo.onText}
+            </SeatsSwitchOption>
+            <SeatsSwitch
+              isOn={meta.switchInfo.isOn}
+              onChange={(switchOn) => {
+                meta.switchInfo.onChange(switchOn)
+              }}
+            />
+            <SeatsSwitchOption isActive={meta.switchInfo.isOn}>
+              {meta.switchInfo.offText}
+            </SeatsSwitchOption>
+          </SeatsSwitchWrapper>
+        )}
+        {parties.reduce((total, party) => {
           const color = getPartyColor(party.label)
           return total.concat(
             [...Array(party.seats)].map((empty, i) => {

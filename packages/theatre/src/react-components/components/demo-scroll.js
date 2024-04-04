@@ -77,16 +77,22 @@ export default function DemoScroll({
 
   // ----------------------------------------
 
-  const [hasMediaError, setHasMediaError] = useState(false) // image & background && video onError
-  const [loadedMedias, setLoadedMedias] = useState(0) // image & background onload
+  // handle error: image & background & video & bgVideo
+  const [hasMediaError, setHasMediaError] = useState(false)
+  // handle loading: image & background & video & bgVideo
+  const [loadedMedias, setLoadedMedias] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
   const totalMedias = objectJson.filter(
-    (data) => data.type === 'IMAGE' || data.type === 'BACKGROUND'
+    (data) =>
+      data.type === 'VIDEO' ||
+      data.type === 'BGVIDEO' ||
+      data.type === 'IMAGE' ||
+      data.type === 'BACKGROUND'
   ).length
 
   useEffect(() => {
-    if (loadedMedias === totalMedias) {
+    if (loadedMedias >= totalMedias) {
       setIsLoading(false)
     }
   }, [loadedMedias, totalMedias, isMobile])
@@ -123,6 +129,7 @@ export default function DemoScroll({
         <Stage
           objectJson={objectJson}
           sheet={sheet}
+          setIsLoading={setIsLoading}
           setHasMediaError={setHasMediaError}
           setLoadedMedias={setLoadedMedias}
         />

@@ -9,6 +9,10 @@ export const VIDEO = {
       nudgeMultiplier: 0.5,
     }),
   }),
+  opacity: types.number(1, {
+    range: [0, 1],
+    nudgeMultiplier: 0.05,
+  }),
   size: types.compound({
     width: types.number(300, {
       nudgeMultiplier: 0.5,

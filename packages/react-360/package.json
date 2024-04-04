@@ -1,6 +1,6 @@
 {
   "name": "@readr-media/react-360",
-  "version": "0.4.0",
+  "version": "0.4.2-beta.4",
   "description": "",
   "main": "lib/index.js",
   "scripts": {
@@ -26,7 +26,7 @@
     "styled-components": "5.3.5"
   },
   "dependencies": {
-    "@readr-media/pannellum-react": "^1.4.2",
+    "@readr-media/pannellum-react": "^1.4.4",
     "react-lottie": "^1.2.3"
   },
   "devDependencies": {

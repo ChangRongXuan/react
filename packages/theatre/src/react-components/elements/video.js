@@ -9,7 +9,7 @@ const Video = styled.video`
   box-sizing: border-box;
 `
 
-export default function VideoElement({ id, sheet, source, onError }) {
+export default function VideoElement({ id, sheet, source, onLoad, onError }) {
   const object = sheet.object(id, {
     ...initialConfig.VIDEO,
   })
@@ -44,9 +44,19 @@ export default function VideoElement({ id, sheet, source, onError }) {
         height: `${newValue.size.height}px`,
         zIndex: `${newValue.zIndex}`,
         transform: `scale(${newValue.scale}) translate(-50%, -50%)`,
+        opacity: `${newValue.opacity}`,
       })
     })
   }, [object])
+
+  // Loading setting ----------------------
+  const [isVideoLoading, setIsVideoLoading] = useState(true)
+
+  useEffect(() => {
+    if (!isVideoLoading) {
+      onLoad()
+    }
+  }, [isVideoLoading])
 
   return (
     <Video
@@ -56,10 +66,20 @@ export default function VideoElement({ id, sheet, source, onError }) {
       ref={setDivRef}
       style={style}
       preload="auto"
+      playsInline={true}
       onEnded={() => {
         setIsPlaying(false)
       }}
-      onError={onError}
+      onWaiting={() => {
+        setIsVideoLoading(true)
+      }}
+      onCanPlay={() => {
+        setIsVideoLoading(false)
+      }}
+      onError={() => {
+        onError()
+        setIsVideoLoading(false)
+      }}
     >
       <source src={source} />
     </Video>

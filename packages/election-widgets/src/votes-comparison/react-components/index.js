@@ -3,7 +3,9 @@
  *  @typedef {import('./typedef').Election} Election
  *  @typedef {import('./typedef').ReferendumElection} ReferendumElection
  *  @typedef {import('./typedef').PresidentElection} PresidentElection
+ *  @typedef {import('./typedef').LegislatorElection} LegislatorElection
  *  @typedef {import('./typedef').LegislatorPartyElection} LegislatorPartyElection
+ *  @typedef {import('./typedef').LegislatorIndigenousElection} LegislatorIndigenousElection
  *  @typedef {import('./manager').DataManager} DataManager
  */
 
@@ -362,17 +364,18 @@ export function CouncilMember({
     </StyledTabs>
   ) : null
 
-  /** @type {string[]} */
-  const options = districts.map((d) => d.districtName)
-
-  const [districtName, setDistrictName] = useState(scrollTo || options?.[0])
-
   const dataManager = dataManagerFactory().newDataManager({
     districts,
     type: 'councilMember',
     year,
     title,
   })
+
+  /** @type {string[]} */
+  const options = districts.map(
+    (d) => d.fullDistrictName || dataManager.genFullDistrictName(d.districtName)
+  )
+  const [districtName, setDistrictName] = useState(scrollTo || options?.[0])
 
   useEffect(() => {
     setDistrictName(scrollTo || options?.[0])
@@ -398,7 +401,6 @@ export function CouncilMember({
             onChange('selector', n)
           }
         }}
-        renderFullOption={(option) => `第${option}選舉區`}
       />
       <StyledList dataManager={dataManager} scrollTo={districtName} />
     </Container>
@@ -414,7 +416,7 @@ export function CouncilMember({
 /**
  *  @param {Object} props
  *  @param {string} [props.className]
- *  @param {Election | ReferendumElection | PresidentElection | LegislatorPartyElection } props.election
+ *  @param {Election | ReferendumElection | PresidentElection | LegislatorPartyElection | LegislatorIndigenousElection | LegislatorElection } props.election
  *  @param {'mobile'|'rwd'} [props.device='rwd']
  *  @param {'openRelations'|'electionMap'|'mnewsElection2022'} [props.theme='openRelations']
  *  @param {string} [props.stickyTopOffset]
@@ -458,6 +460,9 @@ export default function EVC({
         </ThemeProvider>
       )
     case 'legislator':
+    case 'legislator-district':
+    case 'legislator-mountainIndigenous':
+    case 'legislator-plainIndigenous':
     case 'legislator-party':
     case 'mayor':
     case 'referendum':
@@ -500,7 +505,7 @@ function _EVC({ className, dataManager, scrollTo, onChange = () => {} }) {
   /** @type {Election} */
   const data = dataManager.getData()
   const options = data?.districts.map(
-    (c) => c.fullDistrictName || c.districtName
+    (c) => c.fullDistrictName || dataManager.genFullDistrictName(c.districtName)
   )
 
   const [districtName, setDistrictName] = useState(scrollTo || options?.[0])

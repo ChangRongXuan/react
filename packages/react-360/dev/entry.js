@@ -16,6 +16,14 @@ const hotspotsConfig = [
   },
 ]
 
+/** @type {import('../src/react-components/components/react-pannellum.js').Config}  */
+const config = {
+  hotspots: hotspotsConfig,
+  pitch: 0,
+  yaw: 0,
+  showControls: true,
+}
+
 root.render(
   <>
     <div style={{ height: '200vh', background: 'blue' }} />
@@ -26,7 +34,7 @@ root.render(
         mb:
           'https://editools-gcs-dev.readr.tw/images/4710eb66-7d53-4d98-a02f-b1be247505c3-w2400.webP',
       }}
-      hotspotsConfig={hotspotsConfig}
+      config={config}
       caption="some paragraph of caption to describe 360 images"
       isFullScreenWidth={false}
       isEditMode={true}
@@ -39,7 +47,7 @@ root.render(
         mb:
           'https://editools-gcs-dev.readr.tw/images/4710eb66-7d53-4d98-a02f-b1be247505c3-w1600.webP',
       }}
-      hotspotsConfig={hotspotsConfig}
+      config={config}
       caption="some paragraph of caption to describe 360 images"
       isFullScreenWidth={false}
     />
@@ -51,7 +59,7 @@ root.render(
         mb:
           'https://editools-gcs-dev.readr.tw/images/4710eb66-7d53-4d98-a02f-b1be247505c3-w800.webP',
       }}
-      hotspotsConfig={hotspotsConfig}
+      config={config}
       caption="some paragraph of caption to describe 360 images"
       isFullScreenWidth={false}
     />

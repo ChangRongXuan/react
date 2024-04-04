@@ -47,6 +47,7 @@ export default function CustomImage({
     rootMargin: '0px',
     threshold: 0.25,
   },
+  className = '',
 }) {
   const imageRef = useRef(null)
   const [imageSrc, setImageSrc] = useState(
@@ -449,7 +450,7 @@ export default function CustomImage({
 
   return (
     <img
-      className="readr-media-react-image"
+      className={`readr-media-react-image ${className}`}
       style={imageStyle}
       ref={imageRef}
       src={imageSrc}

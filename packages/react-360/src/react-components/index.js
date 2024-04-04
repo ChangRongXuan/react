@@ -50,7 +50,7 @@ const EditorWrapper = styled.div`
   margin: 24px 0;
 `
 
-const EditorHint = styled.label`
+const EditorHint = styled.ul`
   color: #374151;
   display: block;
   font-weight: 600;
@@ -98,7 +98,7 @@ const EditorPanel = styled.textarea`
  *
  * @param {Object} props
  * @param {ImageUrls} props.imageRwdUrls - 360 image url
- * @param {Array} props.hotspotsConfig -  hotspots for 360 image
+ * @param {import('./components/react-pannellum.js').Config} props.config -  config for 360 image
  * @param {string} props.caption - 360 image caption
  * @param {boolean} props.isFullScreenWidth - decide image width: true for '100vw', false for '100%
  * @param {boolean} props.isEditMode - show edit mode to help editor get the needed data like hotspot's pitch and yaw
@@ -106,11 +106,12 @@ const EditorPanel = styled.textarea`
  */
 export default function React360({
   imageRwdUrls,
-  hotspotsConfig,
+  config,
   caption,
   isFullScreenWidth = true,
   isEditMode = false,
 }) {
+  console.log('config', config)
   const pannellumRef = useRef(null)
   const wrapperRef = useRef(null)
   const onceShown = useOnceShown(wrapperRef)
@@ -122,8 +123,6 @@ export default function React360({
     url: 'Add link or remove to prevent redirect',
   })
   const [showPannellumHint, setShowPannellumHint] = useState(false)
-
-  let hotspots = Array.isArray(hotspotsConfig) ? hotspotsConfig : []
 
   const [imageHeight, setImageHeight] = useState(0)
   const [device, setDevice] = useState('mb')
@@ -154,9 +153,26 @@ export default function React360({
         <>
           <EditorWrapper>
             <EditorHint>
-              取得單一熱點資料，點擊下方圖片後會自動更新 pitch/yaw
-              的值，確認角度後請複製到熱點 json 的 array [] 之中，並在熱點 json
-              中修改 text 和 url，不需要跳轉的話請直接刪除 url 這個 key。
+              <li>目前 Config 主要有以下幾點設定：</li>
+              <li>
+                hotspots: 熱點資料，需要由下方的 360 image
+                取得熱點資料，點擊圖片任一個點之後會取得該位置的資訊(顯示於下方
+                textarea 中)，將該熱點資訊請複製到上方的 config.hotspots 的
+                array [] 之中，可以修改 text 值(點擊/ hover 熱點會秀的文字)和
+                url (點擊熱點後跳轉的連結)，若不需要跳轉請直接刪除 url 欄位。
+              </li>
+              <li>
+                pitch:
+                設定畫面初始上下的角度，可比照熱點設定方式取得pitch值來修改
+                config.pitch 的值 (初始畫面會設定為該點的 pitch 值)
+              </li>
+              <li>
+                yaw: 設定畫面初始左右的角度，可比照熱點設定方式取得yaw值來修改
+                config.yaw 的值 (初始畫面會設定為該點的 yaw 值)
+              </li>
+              <li>
+                showControls: 是否顯示控制，包含縮放控制和全螢幕模式的控制
+              </li>
             </EditorHint>
             <EditorPanel
               value={JSON.stringify(hotspotData)}
@@ -177,7 +193,7 @@ export default function React360({
               <ReactPannellum
                 ref={pannellumRef}
                 imageUrl={imageUrl}
-                hotspots={hotspots}
+                config={config}
                 onEditorClick={isEditMode ? onEditorClick : null}
                 onClick={() => {
                   setShowPannellumHint(false)

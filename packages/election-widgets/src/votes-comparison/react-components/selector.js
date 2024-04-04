@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react' // eslint-disable-lin
 import breakpoints from './breakpoint'
 import styled from 'styled-components'
 import { CloseIcon } from './icons'
+import useClickOutside from './hooks/use-click-outside'
 
 const Container = styled.div`
   ${(props) => {
@@ -244,7 +245,10 @@ function Picker({ options, onSelect }) {
   }, [])
 
   const containerRef = useRef(null)
-
+  const bodyRef = useRef(null)
+  useClickOutside(bodyRef, () => {
+    onSelect(undefined)
+  })
   const optionsJsx = options.map((o, idx) => {
     return (
       <StyledOption key={idx} onClick={() => onSelect(o)}>
@@ -255,7 +259,7 @@ function Picker({ options, onSelect }) {
 
   return (
     <LightBoxContainer ref={containerRef}>
-      <LightBoxBody>
+      <LightBoxBody ref={bodyRef}>
         <div>
           <span>請選擇選區</span>
           <div onClick={() => onSelect(undefined)}>

@@ -4,6 +4,7 @@ import FontElement from '../elements/font.js'
 import ImageElement from '../elements/image.js'
 import BackgroundElement from '../elements/background.js'
 import VideoElement from '../elements/video.js'
+import BgVideoElement from '../elements/bgVideo.js'
 
 const Wrapper = styled.div`
   width: 100vw;
@@ -20,6 +21,7 @@ export default function Stage({
   sheet,
   setLoadedMedias = () => {},
   setHasMediaError = () => {},
+  setIsLoading = () => {},
 }) {
   if (!objectJson.length) {
     return null
@@ -78,7 +80,24 @@ export default function Stage({
           id={data.id}
           source={data.src}
           sheet={sheet}
+          onLoad={handleOnLoad}
           onError={handleOnError}
+        />
+      )
+    })
+
+  const bgVideoElements = objectJson
+    .filter((data) => data.type === 'BGVIDEO')
+    .map((data) => {
+      return (
+        <BgVideoElement
+          key={'bgVideo' + data.id}
+          id={data.id}
+          source={data.src}
+          sheet={sheet}
+          onLoad={handleOnLoad}
+          onError={handleOnError}
+          setIsLoading={setIsLoading}
         />
       )
     })
@@ -89,6 +108,7 @@ export default function Stage({
       {imageElements}
       {bgElements}
       {videoElements}
+      {bgVideoElements}
     </Wrapper>
   )
 }

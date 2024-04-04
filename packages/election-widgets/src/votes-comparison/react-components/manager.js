@@ -1,4 +1,4 @@
-import React, {useState} from 'react' // eslint-disable-line
+import React, { useState } from 'react' // eslint-disable-line
 import breakpoint from './breakpoint'
 import styled from 'styled-components'
 import { AnonymousIcon, ElectedIcon } from './icons'
@@ -8,6 +8,7 @@ import { AnonymousIcon, ElectedIcon } from './icons'
  *  @typedef {import('./typedef').CouncilMemberElection} CouncilMemberElection
  *  @typedef {import('./typedef').ReferendumElection} ReferendumElection
  *  @typedef {import('./typedef').LegislatorPartyElection} LegislatorPartyElection
+ *  @typedef {import('./typedef').LegislatorIndigenousElection} LegislatorIndigenousElection
  *  @typedef {import('./typedef').PresidentElection} PresidentElection
  *  @typedef {import('./typedef').Proposition} Proposition
  *  @typedef {import('./typedef').Candidate} Candidate
@@ -36,6 +37,10 @@ import { AnonymousIcon, ElectedIcon } from './icons'
 
 const ImgBlock = styled.div`
   margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   img,
   svg {
     width: 32px;
@@ -47,6 +52,17 @@ const ImgBlock = styled.div`
 
   ${(props) => {
     switch (props.theme?.device) {
+      case 'mobile': {
+        return `
+          @media ${breakpoint.devices.laptop} {
+            img, svg {
+              width: 32px;
+              height: 32px;
+            }
+          }
+        `
+      }
+
       case 'rwd':
       default: {
         return `
@@ -131,7 +147,8 @@ export class DataManager {
    *  @param {string} id
    *  @returns {Row}
    */
-  getRowById(id) { // eslint-disable-line
+  // eslint-disable-next-line no-unused-vars
+  getRowById(id) {
     console.warn('Method `getRowById` needs to be implemented.')
     return {
       id: '',
@@ -144,13 +161,22 @@ export class DataManager {
    *  @param {string} dn
    *  @returns {Row}
    */
-  findRowByDistrictName(dn) { // eslint-disable-line
+  // eslint-disable-next-line no-unused-vars
+  findRowByDistrictName(dn) {
     console.warn('Method `findRowByValue` needs to be implemented.')
     return {
       id: '',
       cells: [],
       group: '',
     }
+  }
+
+  /**
+   *  @param {string} dn
+   *  @returns {string}
+   */
+  genFullDistrictName(dn) {
+    return dn
   }
 }
 
@@ -220,11 +246,10 @@ export class CouncilMemberDataManager extends DataManager {
   }
 
   /**
-   *  @param {string} dn
-   *  @returns {string}
+   *  @override
    */
   genFullDistrictName(dn) {
-    return `第${dn}選舉區`
+    return `第${dn}選區`
   }
 
   /**
@@ -246,15 +271,21 @@ export class CouncilMemberDataManager extends DataManager {
           group: '',
         }
 
-        row.group = d.districtName
-        row.id = `${d.districtName}-${cIdx}`
-        let districtName = ''
+        // `districtName` 為 (1)下拉選單內容 (2)「地區」欄內容 (3)scrollTo 對應的 id 資訊
+        /** @type {string} */
+        let districtName =
+          d.fullDistrictName || this.genFullDistrictName(d.districtName) || ''
+        row.id = `${districtName}-${cIdx}` // data for `data-row-id`
+        row.group = districtName
+
+        //「地區」欄-內容小標（除了 cIdx[0] 外的都不顯示小標）
+        /** @type {string} */
+        let areaLabel = ''
         if (cIdx === 0) {
-          districtName =
-            d.fullDistrictName || this.genFullDistrictName(d.districtName)
+          areaLabel = districtName
         }
         row.cells = this.buildRowFromCandidate(c)
-        row.cells.unshift([{ label: districtName }])
+        row.cells.unshift([{ label: areaLabel }])
         this.rows.push(row)
       })
     })
@@ -266,7 +297,7 @@ export class CouncilMemberDataManager extends DataManager {
    *  @param {string} districtName
    *  @returns {Row}
    */
-  findRowByDistrictName(districtName = '01') {
+  findRowByDistrictName(districtName = '第01選區') {
     return this.rows.find((r) => {
       return r.group === districtName
     })
@@ -334,7 +365,7 @@ export class LegislatorPartyDataManager extends DataManager {
         },
       ],
       // 政黨
-      this.buildPartyCell([p.party]),
+      this.buildPartyCell([p?.party]),
       // 得票數
       [
         {
@@ -344,7 +375,7 @@ export class LegislatorPartyDataManager extends DataManager {
       // 得票率
       [
         {
-          label: p?.tksRate?.toLocaleString() ?? '-',
+          label: typeof p?.tksRate1 === 'number' ? `${p?.tksRate1}%` : '-',
         },
       ],
       // 當選席次
@@ -384,6 +415,142 @@ export class LegislatorPartyDataManager extends DataManager {
       row.cells.unshift([{ label: districtName }])
       return row
     })
+    return this.rows
+  }
+
+  /**
+   *  @override
+   *  @param {string} districtName
+   *  @returns {Row}
+   */
+  findRowByDistrictName(districtName = '全國') {
+    return this.rows.find((r) => {
+      return r.group === districtName
+    })
+  }
+}
+
+export class LegislatorIndigenousDataManager extends DataManager {
+  /**
+   *  @override
+   *  @param {LegislatorIndigenousElection} data
+   */
+  constructor(data) {
+    super(data)
+
+    if (data.type === 'legislator-mountainIndigenous') {
+      this.districts = [{ districtName: '全國 (山地)' }]
+    } else if (data.type === 'legislator-plainIndigenous') {
+      this.districts = [{ districtName: '全國 (平地)' }]
+    } else {
+      this.districts = [{ districtName: '全國' }]
+    }
+  }
+
+  /**
+   *  @return {LegislatorIndigenousElection & { districts: {districtName: string}[] }} data
+   */
+  getData() {
+    let defaultDistrictName = '全國'
+
+    if (this.data.type === 'legislator-mountainIndigenous') {
+      defaultDistrictName = '全國 (山地)'
+    } else if (this.data.type === 'legislator-plainIndigenous') {
+      defaultDistrictName = '全國 (平地)'
+    }
+
+    return {
+      ...this.data,
+      districts: [
+        {
+          districtName: defaultDistrictName || '全國',
+        },
+      ],
+    }
+  }
+
+  /**
+   *  @override
+   *  @returns {Head[]}
+   */
+  buildListHead() {
+    // built already, therefore return the built one
+    if (this.head.length > 0) {
+      return this.head
+    }
+    this.head = ['地區', '號次', '姓名', '推薦政黨', '得票數', '得票率', '當選']
+    return this.head
+  }
+
+  /**
+   *  @param {LegislatorCandidate} c
+   *  @returns {Cell[]}
+   */
+  buildRowFromCandidates(c) {
+    return [
+      // 號次
+      [
+        {
+          label: `${c?.candNo ?? '-'}`,
+        },
+      ],
+      // 姓名
+      this.buildNameCell([c?.name]),
+      // 政黨
+      this.buildPartyCell([c?.party]),
+      // 得票數
+      [
+        {
+          label: c?.tks?.toLocaleString() ?? '-',
+        },
+      ],
+      // 得票率
+      [
+        {
+          label: typeof c?.tksRate === 'number' ? `${c?.tksRate}%` : '-',
+        },
+      ],
+      // 當選
+      [
+        {
+          imgJsx: c?.candVictor ? <ElectedIcon /> : null,
+        },
+      ],
+    ]
+  }
+  /**
+   *  @override
+   *  @returns {Row[]}
+   */
+  buildListRows() {
+    // built already, therefore return the built one
+    if (this.rows.length > 0) {
+      return this.rows
+    }
+
+    this.rows = []
+
+    /** @type {LegislatorIndigenousElection} */
+    const data = this.data
+    data?.candidates?.forEach((c, cIdx) => {
+      /** @type {Row} */
+      const row = {
+        id: '',
+        cells: [],
+        group: '',
+      }
+
+      let districtName = ''
+      row.group = districtName
+      row.id = c.candNo
+      if (cIdx === 0) {
+        districtName = this.districts?.[0]?.districtName
+      }
+      row.cells = this.buildRowFromCandidates(c)
+      row.cells.unshift([{ label: districtName }])
+      this.rows.push(row)
+    })
+
     return this.rows
   }
 
@@ -666,7 +833,7 @@ export class PresidentDataManager extends DataManager {
 export function dataManagerFactory() {
   return {
     /**
-     *  @param {Election | ReferendumElection | LegislatorPartyElection | PresidentElection } data
+     *  @param {Election | ReferendumElection | LegislatorPartyElection | PresidentElection |LegislatorIndigenousElection  } data
      *  @returns {DataManager}
      */
     newDataManager: (data) => {
@@ -676,7 +843,11 @@ export function dataManagerFactory() {
         case 'councilMember':
           return new CouncilMemberDataManager(data)
         case 'legislator':
+        case 'legislator-district':
           return new LegislatorDataManager(data)
+        case 'legislator-plainIndigenous':
+        case 'legislator-mountainIndigenous':
+          return new LegislatorIndigenousDataManager(data)
         case 'legislator-party':
           return new LegislatorPartyDataManager(data)
         case 'referendum':

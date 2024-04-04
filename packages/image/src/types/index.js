@@ -60,6 +60,7 @@
  * - Options of intersection observers, let you control the circumstance of observers.
  * - Optional, default value is `{ root: null, rootMargin: '0px', threshold: 0.25, }`.
  * - See [Mdn Docs](https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API) to get more information.
+ * @property {string} [props.className]
  */
 
 export default {}

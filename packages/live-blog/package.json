@@ -1,6 +1,6 @@
 {
   "name": "@readr-media/react-live-blog",
-  "version": "1.1.9",
+  "version": "1.1.13",
   "description": "",
   "main": "lib/index.js",
   "scripts": {

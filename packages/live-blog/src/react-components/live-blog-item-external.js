@@ -51,10 +51,9 @@ export default function LiveBlogItemExternal({
     e.stopPropagation()
     setExpanded((expanded) => !expanded)
     onChange({
-      category: 'liveBlogItem',
-      eventName: 'click',
+      eventName: 'Click',
       eventTarget: '繼續閱讀按鈕',
-      eventValue: expanded ? '顯示較少' : '繼續閱讀',
+      eventValue: expanded ? '展開較少' : '繼續閱讀',
       metadata: {
         article: {
           title: article.title,
@@ -66,8 +65,7 @@ export default function LiveBlogItemExternal({
   const openExternalLinkHandler = () => {
     window.open(article.external, '_blank')
     onChange({
-      category: 'liveBlogItem',
-      eventName: 'click',
+      eventName: 'Click',
       eventTarget: '外連按鈕',
       metadata: {
         article: {

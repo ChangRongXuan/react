@@ -8,20 +8,14 @@ import errors from '@twreporter/errors'
 
 export default class Loader {
   apiUrl = 'https://whoareyou-gcs.readr.tw/elections'
-  version = 'v1'
 
   /**
    *  @constructor
    *  @param {Object} props
    *  @param {string} [props.apiUrl='https://whoareyou-gcs.readr.tw']
-   *  @param {string} [props.version=v2]
    */
-  constructor({
-    apiUrl = 'https://whoareyou-gcs.readr.tw/elections',
-    version = 'v1',
-  }) {
+  constructor({ apiUrl = 'https://whoareyou-gcs.readr.tw/elections' }) {
     this.apiUrl = apiUrl
-    this.version = version === 'v1' ? '' : version
   }
 
   /**
@@ -36,9 +30,7 @@ export default class Loader {
   async loadData({ year, type, filename }) {
     try {
       const axiosRes = await axios.get(
-        this.version
-          ? `${this.apiUrl}/${this.version}/${year}/${type}/${filename}`
-          : `${this.apiUrl}/${year}/${type}/${filename}`
+        `${this.apiUrl}/${year}/${type}/${filename}`
       )
       return axiosRes?.data
     } catch (err) {
@@ -60,6 +52,83 @@ export default class Loader {
       type: 'councilMember',
       year,
       filename: `seat/county/${countyCode}.json`,
+    })
+  }
+
+  /**
+   *  Load data from web service.
+   *  @param {Object} props
+   *  @param {string} props.year
+   *  @param {string} props.countyCode - county code, see `Loader.countyCodes` for more info
+   *  @throws Error
+   *  @returns {Promise<SeatData>}
+   */
+  loadAreaLegislatorData({ year, countyCode }) {
+    return this.loadData({
+      type: 'legislator',
+      year,
+      filename: `seat/county/normal/${countyCode}.json`,
+    })
+  }
+
+  /**
+   *  Load data from web service.
+   *  @param {Object} props
+   *  @param {string} props.year
+   *  @param {string} props.countyCode - county code, see `Loader.countyCodes` for more info
+   *  @throws Error
+   *  @returns {Promise<SeatData>}
+   */
+  loadAllLegislatorData({ year }) {
+    return this.loadData({
+      type: 'legislator',
+      year,
+      filename: `seat/country/all/country.json`,
+    })
+  }
+
+  /**
+   *  Load data from web service.
+   *  @param {Object} props
+   *  @param {string} props.year
+   *  @throws Error
+   *  @returns {Promise<SeatData>}
+   */
+  loadMountainIndigenousLegislatorData({ year }) {
+    return this.loadData({
+      type: 'legislator',
+      year,
+      filename: `seat/country/mountain-indigenous/country.json`,
+    })
+  }
+
+  /**
+   *  Load data from web service.
+   *  @param {Object} props
+   *  @param {string} props.year
+   *  @throws Error
+   *  @returns {Promise<SeatData>}
+   */
+  loadPlainIndigenousLegislatorData({ year }) {
+    return this.loadData({
+      type: 'legislator',
+      year,
+      filename: `seat/country/plain-indigenous/country.json`,
+    })
+  }
+
+  /**
+   *  Load data from web service.
+   *  @param {Object} props
+   *  @param {string} props.year
+   *  @throws Error
+   *  @returns {Promise<SeatData>}
+   */
+  loadPartyLegislatorData({ year }) {
+    return this.loadData({
+      type: 'legislator',
+      year,
+      filename: `seat/country/party/country.json`,
     })
   }
 }

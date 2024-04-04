@@ -11,7 +11,6 @@ const votesComparisonRoot = createRoot(
 async function renderSeatChart() {
   const ldr = new widgets.SeatChart.DataLoader({
     apiUrl: 'https://whoareyou-gcs.readr.tw/elections-dev',
-    version: 'v1',
   })
 
   const data = await ldr.loadCouncilMemberData({

@@ -53,8 +53,7 @@ export default function LiveBlogTags({
       updateActiveTags([...activeTags, clickedTagName])
     }
     onChange({
-      category: 'tag',
-      eventName: 'click',
+      eventName: 'Click',
       eventTarget: 'tag 按鈕',
       eventValue: clickedTagName,
     })

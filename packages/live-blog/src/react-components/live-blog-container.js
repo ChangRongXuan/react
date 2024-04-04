@@ -9,7 +9,12 @@ import { liveblogItemId } from '../utils/anchor-scroll-helper'
 
 const initialShowingCount = 5
 
-export default function LiveBlogContainr({ liveblog, fetchImageBaseUrl, onChange }) { // eslint-disable-line
+export default function LiveBlogContainr({
+  liveblog,
+  fetchImageBaseUrl,
+  onChange,
+}) {
+  // eslint-disable-line
   const liveblogItemsRef = useRef([])
   const [boostedLiveblogItems, setBoostedLiveblogItems] = useState([])
   // showing non boosted liveblogItems
@@ -116,8 +121,6 @@ export default function LiveBlogContainr({ liveblog, fetchImageBaseUrl, onChange
     }
   }, [boostedLiveblogItems, showingLiveblogItems])
 
-  console.log('showingLiveblogItems', showingLiveblogItems)
-
   return (
     <LiveBlogWrapper>
       <Intro
@@ -132,6 +135,11 @@ export default function LiveBlogContainr({ liveblog, fetchImageBaseUrl, onChange
         onChangeOrder={() => {
           setNewToOld((value) => !value)
           setShowingCount(initialShowingCount)
+          onChange({
+            eventName: 'Click',
+            eventTarget: '由新至舊按鈕',
+            eventValue: newToOld ? '由舊至新' : '由新至舊',
+          })
         }}
       />
       <LiveBlogTags
